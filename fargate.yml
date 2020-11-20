@@ -1,0 +1,32 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This stack deploys the core network infrastructure and IAM resources
+             to be used for a service hosted in Amazon ECS using AWS Fargate.
+
+Mappings:
+  SubnetConfig:
+    VPC:
+      CIDR: '10.0.0.0/16'
+    PublicOne:
+      CIDR: '10.0.0.0/19'
+    PublicTwo:
+      CIDR: '10.0.32.0/19'
+    PublicThree:
+      CIDR: '10.0.64.0/19'
+    PrivateOne:
+      CIDR: '10.0.96.0/19'
+    PrivateTwo:
+      CIDR: '10.0.128.0/19'
+    PrivateThree:
+      CIDR: '10.0.160.0/19'
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      CidrBlock: !FindInMap ['SubnetConfig', 'VPC', 'CIDR']
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc
