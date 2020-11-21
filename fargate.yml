@@ -275,3 +275,43 @@ Resources:
       RouteTableId: !Ref 'PrivateSubnetThreeRouteTable'
       DestinationCidrBlock: '0.0.0.0/0'
       NatGatewayId: !Ref 'PublicSubnetThreeNATGateway'
+  ApplicationLoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-fargate-alb-sg
+      GroupDescription: 'Access to the load balancer'
+      VpcId: !Ref 'VPC'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          Description: 'Allow access to ALB from anywhere on the internet'
+          CidrIp: 0.0.0.0/0
+
+
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub ${AWS::StackName}-fargate-cluster
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: fargate-alb
+      LoadBalancerAttributes:
+        - Key: 'deletion_protection.enabled'
+          Value: 'false'
+      Scheme: 'internet-facing'
+      SecurityGroups:
+        - !GetAtt ApplicationLoadBalancerSecurityGroup.GroupId
+      Subnets:
+        - !Ref PublicSubnetOne
+        - !Ref PublicSubnetTwo
+        - !Ref PublicSubnetThree
+      Type: 'application'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-alb
+    DependsOn:
+      - PublicSubnetOneDefaultRoute
+      - PublicSubnetTwoDefaultRoute
+      - PublicSubnetThreeDefaultRoute
