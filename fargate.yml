@@ -182,3 +182,96 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-three-natgateway
+  PrivateSubnetOne:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 0
+        - Fn::GetAZs: {Ref: 'AWS::Region'}
+      VpcId: !Ref 'VPC'
+      CidrBlock: !FindInMap ['SubnetConfig', 'PrivateOne', 'CIDR']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-private-subnet-one
+  PrivateSubnetOneRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-private-subnet-one-route-table
+  PrivateSubnetOneRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref 'PrivateSubnetOneRouteTable'
+      SubnetId: !Ref 'PrivateSubnetOne'
+  PrivateSubnetOneDefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref 'PrivateSubnetOneRouteTable'
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref 'PublicSubnetOneNATGateway'
+  PrivateSubnetTwo:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 1
+        - Fn::GetAZs: {Ref: 'AWS::Region'}
+      VpcId: !Ref 'VPC'
+      CidrBlock: !FindInMap ['SubnetConfig', 'PrivateTwo', 'CIDR']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-private-subnet-two
+  PrivateSubnetTwoRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-private-subnet-two-route-table
+  PrivateSubnetTwoRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref 'PrivateSubnetTwoRouteTable'
+      SubnetId: !Ref 'PrivateSubnetTwo'
+  PrivateSubnetTwoDefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref 'PrivateSubnetTwoRouteTable'
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref 'PublicSubnetTwoNATGateway'
+  PrivateSubnetThree:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 2
+        - Fn::GetAZs: {Ref: 'AWS::Region'}
+      VpcId: !Ref 'VPC'
+      CidrBlock: !FindInMap ['SubnetConfig', 'PrivateThree', 'CIDR']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-private-subnet-three
+  PrivateSubnetThreeRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-private-subnet-three-route-table
+  PrivateSubnetThreeRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref 'PrivateSubnetThreeRouteTable'
+      SubnetId: !Ref 'PrivateSubnetThree'
+  PrivateSubnetThreeDefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref 'PrivateSubnetThreeRouteTable'
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref 'PublicSubnetThreeNATGateway'
