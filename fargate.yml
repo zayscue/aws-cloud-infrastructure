@@ -30,6 +30,17 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-fargate-vpc
+  VPCInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-internet-gateway
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref 'VPC'
+      InternetGatewayId: !Ref 'VPCInternetGateway'
   PublicSubnetOne:
     Type: AWS::EC2::Subnet
     Properties:
@@ -43,3 +54,23 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-one
+  PublicSubnetOneRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-one-route-table
+  PublicSubnetOneRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref 'PublicSubnetOneRouteTable'
+      SubnetId: !Ref 'PublicSubnetOne'
+  PublicSubnetOneDefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref 'PublicSubnetOneRouteTable'
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref 'VPCInternetGateway'
+    DependsOn: 'VPCGatewayAttachment'
+
