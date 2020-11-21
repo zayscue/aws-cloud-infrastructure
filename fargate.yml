@@ -394,3 +394,24 @@ Resources:
               - 'logs:PutLogEvents'
 
             Resource: '*'
+Outputs:
+  VpcId:
+    Description: The VPC for all ECS Services
+    Value: !Ref 'VPC'
+    Export:
+      Name: !Sub '${AWS::StackName}-vpc-id'
+  PrivateSubnetIdOne:
+    Description: The first subnet id for all ECS Services
+    Value: !Ref 'PrivateSubnetOne'
+    Export:
+      Name: !Sub '${AWS::StackName}-private-subnet-id-one'
+  PrivateSubnetIdTwo:
+    Description: The second subnet id for all ECS Services
+    Value: !Ref 'PrivateSubnetTwo'
+    Export:
+      Name: !Sub '${AWS::StackName}-private-subnet-id-two'
+  PrivateSubnetIdThree:
+    Description: The third subnet id for all ECS Services
+    Value: !Ref 'PrivateSubnetThree'
+    Export:
+      Name: !Sub '${AWS::StackName}-private-subnet-id-three'
