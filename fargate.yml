@@ -21,6 +21,7 @@ Mappings:
       CIDR: '10.0.160.0/19'
 
 Resources:
+  # Network Set Up
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -288,11 +289,13 @@ Resources:
           Description: 'Allow access to ALB from anywhere on the internet'
           CidrIp: 0.0.0.0/0
 
-
+  # ECS Cluster Set Up
   Cluster:
     Type: AWS::ECS::Cluster
     Properties:
       ClusterName: !Sub ${AWS::StackName}-fargate-cluster
+
+  # Application Load Balancer Set Up
   ApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -315,3 +318,19 @@ Resources:
       - PublicSubnetOneDefaultRoute
       - PublicSubnetTwoDefaultRoute
       - PublicSubnetThreeDefaultRoute
+  ApplicationLoadBalancerPublicListenerTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      TargetType: ip
+      VpcId: !Ref 'VPC'
+  ApplicationLoadBalancerPublicListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref 'ApplicationLoadBalancerPublicListenerTargetGroup'
+          Type: forward
+      LoadBalancerArn: !Ref 'ApplicationLoadBalancer'
+      Port: 80
+      Protocol: HTTP
