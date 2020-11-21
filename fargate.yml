@@ -73,4 +73,112 @@ Resources:
       DestinationCidrBlock: '0.0.0.0/0'
       GatewayId: !Ref 'VPCInternetGateway'
     DependsOn: 'VPCGatewayAttachment'
-
+  PublicSubnetOneEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: 'vpc'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-one-eip
+  PublicSubnetOneNATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt PublicSubnetOneEIP.AllocationId
+      SubnetId: !Ref 'PublicSubnetOne'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-one-natgateway
+  PublicSubnetTwo:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 1
+        - Fn::GetAZs: {Ref: 'AWS::Region'}
+      VpcId: !Ref 'VPC'
+      CidrBlock: !FindInMap ['SubnetConfig', 'PublicTwo', 'CIDR']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-two
+  PublicSubnetTwoRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-two-route-table
+  PublicSubnetTwoRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref 'PublicSubnetTwoRouteTable'
+      SubnetId: !Ref 'PublicSubnetTwo'
+  PublicSubnetTwoDefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref 'PublicSubnetTwoRouteTable'
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref 'VPCInternetGateway'
+    DependsOn: 'VPCGatewayAttachment'
+  PublicSubnetTwoEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: 'vpc'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-two-eip
+  PublicSubnetTwoNATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt PublicSubnetTwoEIP.AllocationId
+      SubnetId: !Ref 'PublicSubnetTwo'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-two-natgateway
+  PublicSubnetThree:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 2
+        - Fn::GetAZs: {Ref: 'AWS::Region'}
+      VpcId: !Ref 'VPC'
+      CidrBlock: !FindInMap ['SubnetConfig', 'PublicThree', 'CIDR']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-three
+  PublicSubnetThreeRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-three-route-table
+  PublicSubnetThreeRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref 'PublicSubnetThreeRouteTable'
+      SubnetId: !Ref 'PublicSubnetThree'
+  PublicSubnetThreeDefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref 'PublicSubnetThreeRouteTable'
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref 'VPCInternetGateway'
+    DependsOn: 'VPCGatewayAttachment'
+  PublicSubnetThreeEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: 'vpc'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-three-eip
+  PublicSubnetThreeNATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt PublicSubnetThreeEIP.AllocationId
+      SubnetId: !Ref 'PublicSubnetThree'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-fargate-vpc-public-subnet-three-natgateway
