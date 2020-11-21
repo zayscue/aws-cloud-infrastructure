@@ -396,22 +396,42 @@ Resources:
             Resource: '*'
 Outputs:
   VpcId:
-    Description: The VPC for all ECS Services
+    Description: The VPC for all Fargate ECS Services
     Value: !Ref 'VPC'
     Export:
       Name: !Sub '${AWS::StackName}-vpc-id'
   PrivateSubnetIdOne:
-    Description: The first subnet id for all ECS Services
+    Description: The first subnet id for all Fargate ECS Services
     Value: !Ref 'PrivateSubnetOne'
     Export:
       Name: !Sub '${AWS::StackName}-private-subnet-id-one'
   PrivateSubnetIdTwo:
-    Description: The second subnet id for all ECS Services
+    Description: The second subnet id for all Fargate ECS Services
     Value: !Ref 'PrivateSubnetTwo'
     Export:
       Name: !Sub '${AWS::StackName}-private-subnet-id-two'
   PrivateSubnetIdThree:
-    Description: The third subnet id for all ECS Services
+    Description: The third subnet id for all Fargate ECS Services
     Value: !Ref 'PrivateSubnetThree'
     Export:
       Name: !Sub '${AWS::StackName}-private-subnet-id-three'
+  ApplicationLoadBalancerSecurityGroupId:
+    Description: The security group id for the application Elastic Load Balancer
+    Value: !GetAtt 'ApplicationLoadBalancerSecurityGroup.GroupId'
+    Export:
+      Name: !Sub '${AWS::StackName}-alb-sg-id'
+  ApplicationLoadBalancerPublicListenerArn:
+    Description: The arn of the application Elastic Load Balancer Listener
+    Value: !Ref 'ApplicationLoadBalancerPublicListener'
+    Export:
+      Name: !Sub '${AWS::StackName}-alb-listener-arn'
+  ClusterName:
+    Description: The cluster name used by all Fargate ECS Services
+    Value: !Ref 'Cluster'
+    Export:
+      Name: !Sub '${AWS::StackName}-fargate-cluster-name'
+  EcsServiceRoleArn:
+    Description: The task definition role arn for orchestrating all Fargate ECS Services
+    Value: !GetAtt 'EcsServiceRole.Arn'
+    Export:
+      Name: !Sub '${AWS::StackName}-ecs-service-role-arn'
